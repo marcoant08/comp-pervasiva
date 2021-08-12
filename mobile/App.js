@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import init from "react_native_mqtt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import styles from "./styles";
 import Giroscopio from "./Giroscopio";
 import Acelerometro from "./Acelerometro";
-import Mqtt from "./Mqtt";
+import MQTTController from "./MQTTController";
 
 init({
   size: 10000,
@@ -23,31 +23,29 @@ const client = new Paho.MQTT.Client(
   `clientId-${Math.floor(Math.random() * 100)}`
 );
 
-let count = 0;
 const App = () => {
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, z: 0 });
   const [accelerometer, setAccelerometer] = useState({ x: 0, y: 0, z: 0 });
+  const [intervalId, setIntervalId] = useState(null);
   const [connected, setConnected] = useState(false);
   const [active, setActive] = useState(false);
+  const dataRef = useRef(JSON.stringify({ gyroscope, accelerometer }));
 
   useEffect(() => {
-    console.log("connecting...");
+    console.log("CONNECTING...");
 
     client.onConnectionLost = (value) => {
-      console.log("lost", value);
-      console.log("CONNECTION LOST");
+      console.log("CONNECTION LOST:", value);
       setConnected(false);
     };
 
     client.onMessageArrived = (msg) => {
-      count++;
-      console.log(count);
-      // console.log("MESSAGE ARRIVED:", msg._getPayloadString());
+      console.log("MESSAGE ARRIVED:", msg._getPayloadString());
     };
 
     client.connect({
-      onSuccess: (value) => {
-        console.log("CONNECTED");
+      onSuccess: () => {
+        console.log("CONNECTED!");
         setConnected(true);
         client.subscribe("trabson");
       },
@@ -60,35 +58,36 @@ const App = () => {
       timeout: 5,
     });
 
-    sender();
-
     return () => {
       client.disconnect();
     };
   }, []);
 
-  const seconds = (s) => s * 1000;
+  useEffect(() => {
+    if (intervalId) clearInterval(intervalId);
+    if (active) initSender();
 
-  const sender = () => {
-    setInterval(() => {
-      if (connected && active) {
-        console.log("sending...");
+    return () => { clearInterval(intervalId) }
+  }, [active]);
 
-        const payload = JSON.stringify({
-          gyroscope,
-          accelerometer,
-        });
+  useEffect(() => {
+    dataRef.current = JSON.stringify({ gyroscope, accelerometer })
+  }, [gyroscope, accelerometer]);
 
-        client.send("trabson", payload);
-      }
-    }, seconds(1));
+  const initSender = () => {
+    setIntervalId(setInterval((con, act) => {
+      if (con && act) {
+        client.send("trabson", dataRef.current);
+        console.log("sending in 'trabson':", dataRef.current);
+      } else console.log("collecting but disconnected 'trabson':", dataRef.current)
+    }, 1000, connected, active, gyroscope, accelerometer))
   };
 
   return (
     <View style={styles.page}>
       <Giroscopio setValue={setGyroscope} value={gyroscope} />
       <Acelerometro setValue={setAccelerometer} value={accelerometer} />
-      <Mqtt connected={connected} active={active} setActive={setActive} />
+      <MQTTController connected={connected} active={active} setActive={setActive} />
     </View>
   );
 };

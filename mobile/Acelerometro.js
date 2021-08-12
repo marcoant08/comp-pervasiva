@@ -3,17 +3,19 @@ import { Text, View } from "react-native";
 import { Accelerometer } from "expo-sensors";
 import styles from "./styles";
 
-// const Acelerometro = () => {
 const Acelerometro = ({ value, setValue }) => {
   const [subscription, setSubscription] = useState(null);
-  //   const [value, setValue] = useState({ x: 0.0, y: 0.0, z: 0.0 });
 
   const _subscribe = () => {
-    Accelerometer.setUpdateInterval(800);
+    Accelerometer.setUpdateInterval(1000);
 
     setSubscription(
       Accelerometer.addListener((accelerometerData) => {
-        setValue(accelerometerData);
+        setValue({
+          x: accelerometerData.x.toFixed(3),
+          y: accelerometerData.y.toFixed(3),
+          z: accelerometerData.z.toFixed(3)
+        });
       })
     );
   };
@@ -32,8 +34,7 @@ const Acelerometro = ({ value, setValue }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Acelerômetro</Text>
       <Text style={styles.text}>
-        X: {value.x.toFixed(2)}, Y: {value.y.toFixed(2)}, Z:{" "}
-        {value.z.toFixed(2)}
+        X: {value.x}, Y: {value.y}, Z: {value.z}
       </Text>
     </View>
   );

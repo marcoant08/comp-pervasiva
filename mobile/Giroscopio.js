@@ -3,17 +3,19 @@ import { Text, View } from "react-native";
 import { Gyroscope } from "expo-sensors";
 import styles from "./styles";
 
-// const Giroscopio = () => {
 const Giroscopio = ({ value, setValue }) => {
   const [subscription, setSubscription] = useState(null);
-  //   const [value, setValue] = useState({ x: 0.0, y: 0.0, z: 0.0 });
 
   const _subscribe = () => {
-    Gyroscope.setUpdateInterval(800);
+    Gyroscope.setUpdateInterval(1000);
 
     setSubscription(
       Gyroscope.addListener((gyroscopeData) => {
-        setValue(gyroscopeData);
+        setValue({
+          x: gyroscopeData.x.toFixed(3),
+          y: gyroscopeData.y.toFixed(3),
+          z: gyroscopeData.z.toFixed(3)
+        });
       })
     );
   };
@@ -32,8 +34,7 @@ const Giroscopio = ({ value, setValue }) => {
     <View style={styles.container}>
       <Text style={styles.title}>Giroscópio</Text>
       <Text style={styles.text}>
-        X: {value.x.toFixed(2)}, Y: {value.y.toFixed(2)}, Z:{" "}
-        {value.z.toFixed(2)}
+        X: {value.x}, Y: {value.y}, Z: {value.z}
       </Text>
     </View>
   );
