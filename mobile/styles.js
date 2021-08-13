@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 2,
     elevation: 10,
-    minHeight: 60,
+    paddingVertical: 10,
     backgroundColor: "#fff",
     borderRadius: 15,
     width: "95%",

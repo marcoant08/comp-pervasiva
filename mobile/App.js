@@ -6,6 +6,8 @@ import styles from "./styles";
 import Giroscopio from "./Giroscopio";
 import Acelerometro from "./Acelerometro";
 import MQTTController from "./MQTTController";
+import Barometro from "./Barometro";
+import Magnetometro from "./Magnetometro";
 
 init({
   size: 10000,
@@ -26,10 +28,17 @@ const client = new Paho.MQTT.Client(
 const App = () => {
   const [gyroscope, setGyroscope] = useState({ x: 0, y: 0, z: 0 });
   const [accelerometer, setAccelerometer] = useState({ x: 0, y: 0, z: 0 });
+  const [magnetometer, setMagnetometer] = useState({ x: 0, y: 0, z: 0 });
+  const [barometer, setBarometer] = useState({
+    pressure: 0,
+    relativeAltitude: 0,
+  });
   const [intervalId, setIntervalId] = useState(null);
   const [connected, setConnected] = useState(false);
   const [active, setActive] = useState(false);
-  const dataRef = useRef(JSON.stringify({ gyroscope, accelerometer }));
+  const dataRef = useRef(
+    JSON.stringify({ gyroscope, accelerometer, magnetometer, barometer })
+  );
 
   useEffect(() => {
     console.log("CONNECTING...");
@@ -47,7 +56,7 @@ const App = () => {
       onSuccess: () => {
         console.log("CONNECTED!");
         setConnected(true);
-        client.subscribe("trabson");
+        client.subscribe("sensors");
       },
       onFailure: (error) => {
         console.log("error:", error);
@@ -67,27 +76,53 @@ const App = () => {
     if (intervalId) clearInterval(intervalId);
     if (active) initSender();
 
-    return () => { clearInterval(intervalId) }
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [active]);
 
   useEffect(() => {
-    dataRef.current = JSON.stringify({ gyroscope, accelerometer })
-  }, [gyroscope, accelerometer]);
+    dataRef.current = JSON.stringify({
+      gyroscope,
+      accelerometer,
+      magnetometer,
+      barometer,
+    });
+  }, [gyroscope, accelerometer, magnetometer, barometer]);
 
   const initSender = () => {
-    setIntervalId(setInterval((con, act) => {
-      if (con && act) {
-        client.send("trabson", dataRef.current);
-        console.log("sending in 'trabson':", dataRef.current);
-      } else console.log("collecting but disconnected 'trabson':", dataRef.current)
-    }, 1000, connected, active, gyroscope, accelerometer))
+    setIntervalId(
+      setInterval(
+        (con, act) => {
+          if (con && act) {
+            client.send("sensors", dataRef.current);
+            console.log("sending in 'sensors':", dataRef.current);
+          } else
+            console.log(
+              "collecting but disconnected 'sensors':",
+              dataRef.current
+            );
+        },
+        1000,
+        connected,
+        active,
+        gyroscope,
+        accelerometer
+      )
+    );
   };
 
   return (
     <View style={styles.page}>
+      <Magnetometro setValue={setMagnetometer} value={magnetometer} />
       <Giroscopio setValue={setGyroscope} value={gyroscope} />
       <Acelerometro setValue={setAccelerometer} value={accelerometer} />
-      <MQTTController connected={connected} active={active} setActive={setActive} />
+      <Barometro setValue={setBarometer} value={barometer} />
+      <MQTTController
+        connected={connected}
+        active={active}
+        setActive={setActive}
+      />
     </View>
   );
 };
