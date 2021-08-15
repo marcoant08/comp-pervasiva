@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { Magnetometer } from "expo-sensors";
-import styles from "./styles";
+import { Gyroscope } from "expo-sensors";
+import styles from "../assets/global/styles";
 
-const Magnetometro = ({ value, setValue }) => {
+const Giroscopio = ({ value, setValue }) => {
   const [subscription, setSubscription] = useState(null);
 
   const _subscribe = () => {
-    Magnetometer.setUpdateInterval(1000);
+    Gyroscope.setUpdateInterval(1000);
 
     setSubscription(
-      Magnetometer.addListener((magnetometerData) => {
+      Gyroscope.addListener((gyroscopeData) => {
         setValue({
-          x: magnetometerData.x.toFixed(3),
-          y: magnetometerData.y.toFixed(3),
-          z: magnetometerData.z.toFixed(3),
+          x: gyroscopeData.x.toFixed(3),
+          y: gyroscopeData.y.toFixed(3),
+          z: gyroscopeData.z.toFixed(3)
         });
       })
     );
@@ -32,7 +32,7 @@ const Magnetometro = ({ value, setValue }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Magnetômetro</Text>
+      <Text style={styles.title}>Giroscópio</Text>
       <Text style={styles.text}>
         X: {value.x}, Y: {value.y}, Z: {value.z}
       </Text>
@@ -40,4 +40,4 @@ const Magnetometro = ({ value, setValue }) => {
   );
 };
 
-export default Magnetometro;
+export default Giroscopio;

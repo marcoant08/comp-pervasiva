@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import init from "react_native_mqtt";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import styles from "./styles";
-import Giroscopio from "./Giroscopio";
-import Acelerometro from "./Acelerometro";
-import MQTTController from "./MQTTController";
-import Barometro from "./Barometro";
-import Magnetometro from "./Magnetometro";
+import Giroscopio from "./src/components/Giroscopio";
+import Acelerometro from "./src/components/Acelerometro";
+import MQTTController from "./src/components/MQTTController";
+import Barometro from "./src/components/Barometro";
+import Magnetometro from "./src/components/Magnetometro";
+import Localizacao from "./src/components/Localizacao";
+import styles from "./src/assets/global/styles";
 
 init({
   size: 10000,
@@ -34,6 +35,7 @@ const App = () => {
     relativeAltitude: 0,
   });
   const [intervalId, setIntervalId] = useState(null);
+  const [location, setLocation] = useState(null);
   const [connected, setConnected] = useState(false);
   const [active, setActive] = useState(false);
   const dataRef = useRef(
@@ -87,8 +89,9 @@ const App = () => {
       accelerometer,
       magnetometer,
       barometer,
+      location
     });
-  }, [gyroscope, accelerometer, magnetometer, barometer]);
+  }, [gyroscope, accelerometer, magnetometer, barometer, location]);
 
   const initSender = () => {
     setIntervalId(
@@ -118,6 +121,7 @@ const App = () => {
       <Giroscopio setValue={setGyroscope} value={gyroscope} />
       <Acelerometro setValue={setAccelerometer} value={accelerometer} />
       <Barometro setValue={setBarometer} value={barometer} />
+      <Localizacao setValue={setLocation} value={location} />
       <MQTTController
         connected={connected}
         active={active}

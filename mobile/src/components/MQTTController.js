@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import styles from "./styles";
+import styles from "../assets/global/styles";
 
 const Mqtt = ({ connected, active, setActive }) => {
   return (

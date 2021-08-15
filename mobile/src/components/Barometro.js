@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Platform, Text, View } from "react-native";
 import { Barometer } from "expo-sensors";
-import styles from "./styles";
+import styles from "../assets/global/styles";
 
 const Barometro = ({ value, setValue }) => {
   const [subscription, setSubscription] = useState(null);

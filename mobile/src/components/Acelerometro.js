@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View } from "react-native";
-import { Gyroscope } from "expo-sensors";
-import styles from "./styles";
+import { Accelerometer } from "expo-sensors";
+import styles from "../assets/global/styles";
 
-const Giroscopio = ({ value, setValue }) => {
+const Acelerometro = ({ value, setValue }) => {
   const [subscription, setSubscription] = useState(null);
 
   const _subscribe = () => {
-    Gyroscope.setUpdateInterval(1000);
+    Accelerometer.setUpdateInterval(1000);
 
     setSubscription(
-      Gyroscope.addListener((gyroscopeData) => {
+      Accelerometer.addListener((accelerometerData) => {
         setValue({
-          x: gyroscopeData.x.toFixed(3),
-          y: gyroscopeData.y.toFixed(3),
-          z: gyroscopeData.z.toFixed(3)
+          x: accelerometerData.x.toFixed(3),
+          y: accelerometerData.y.toFixed(3),
+          z: accelerometerData.z.toFixed(3)
         });
       })
     );
@@ -32,7 +32,7 @@ const Giroscopio = ({ value, setValue }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Giroscópio</Text>
+      <Text style={styles.title}>Acelerômetro</Text>
       <Text style={styles.text}>
         X: {value.x}, Y: {value.y}, Z: {value.z}
       </Text>
@@ -40,4 +40,4 @@ const Giroscopio = ({ value, setValue }) => {
   );
 };
 
-export default Giroscopio;
+export default Acelerometro;
