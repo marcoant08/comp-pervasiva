@@ -1,9 +1,136 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { Chart } from 'react-charts'
 import './App.css';
+import WrappedMap from './Map';
+var mqtt = require('mqtt')
+var client;
 
 function App() {
+  const [location, setLocation] = useState(null);
+  const [connected, setConnected] = useState(false);
+  const [pressure, setPressure] = useState(0);
+
+  const [dataGyroscope, setDataGyroscope] = useState([
+    { label: 'X', data: [[0, 0]] },
+    { label: 'Y', data: [[0, 0]] },
+    { label: 'Z', data: [[0, 0]] }
+  ])
+
+  const [dataAccelerometer, setDataAccelerometer] = useState([
+    { label: 'X', data: [[0, 0]] },
+    { label: 'Y', data: [[0, 0]] },
+    { label: 'Z', data: [[0, 0]] }
+  ])
+
+  const [dataMagnetometer, setDataMagnetometer] = useState([
+    { label: 'X', data: [[0, 0]] },
+    { label: 'Y', data: [[0, 0]] },
+    { label: 'Z', data: [[0, 0]] }
+  ])
+
+  const [dataRelativeAltitude, setDataRelativeAltitude] = useState([
+    { label: 'RelativeAltitude', data: [[0, 0]] }
+  ])
+
+  const axes = useMemo(
+    () => [
+      { primary: true, type: 'linear', position: 'bottom' },
+      { type: 'linear', position: 'left' }
+    ],
+    []
+  )
+
+  useEffect(() => {
+    client = mqtt.connect("ws://broker.mqttdashboard.com:8000/mqtt", 'clientId-' + Math.random())
+
+    client.on('connect', (value) => {
+      console.log("connected", value)
+
+      client.subscribe('sensors', (err) => {
+        if (!err) { console.log('dashboard web is receiving...') }
+      })
+
+      setConnected(true)
+    })
+
+    client.on('message', (topic, message) => {
+      console.log(`topic: ${topic}`, `message: ${message.toString()}`)
+      organizeData(message.toString())
+    })
+
+    return () => { client.end() }
+  }, [])
+
+  const organizeData = (data) => {
+    try {
+      const parsedData = JSON.parse(data)
+
+      setDataGyroscope(current => [
+        { label: 'X', data: [...current[0].data, [current[0].data.length, parsedData.gyroscope.x]] },
+        { label: 'Y', data: [...current[1].data, [current[1].data.length, parsedData.gyroscope.y]] },
+        { label: 'Z', data: [...current[2].data, [current[2].data.length, parsedData.gyroscope.z]] }
+      ])
+
+      setDataAccelerometer(current => [
+        { label: 'X', data: [...current[0].data, [current[0].data.length, parsedData.accelerometer.x]] },
+        { label: 'Y', data: [...current[1].data, [current[1].data.length, parsedData.accelerometer.y]] },
+        { label: 'Z', data: [...current[2].data, [current[2].data.length, parsedData.accelerometer.z]] }
+      ])
+
+      setDataMagnetometer(current => [
+        { label: 'X', data: [...current[0].data, [current[0].data.length, parsedData.magnetometer.x]] },
+        { label: 'Y', data: [...current[1].data, [current[1].data.length, parsedData.magnetometer.y]] },
+        { label: 'Z', data: [...current[2].data, [current[2].data.length, parsedData.magnetometer.z]] }
+      ])
+
+      setDataRelativeAltitude(current => [
+        { label: 'RelativeAltitude', data: [...current[0].data, [current[0].data.length, parsedData.barometer.relativeAltitude]] },
+      ])
+
+      setPressure(parsedData.barometer.pressure)
+      setLocation(parsedData.location)
+    } catch (e) { console.log(e.message) }
+  }
+
   return (
     <div className="App">
-      <h1>hello, world!</h1>
+      <h1 style={{ color: connected ? "#3CB371" : "#DC143C" }}>MQTT Dashboard: {!connected ? "des" : ""}conectado</h1>
+
+      <div className="charts-container">
+        <div className="chart" >
+          <h2>Giroscópio</h2>
+          <Chart data={dataGyroscope} axes={axes} />
+        </div>
+
+        <div className="chart" >
+          <h2>Acelerômetro</h2>
+          <Chart data={dataAccelerometer} axes={axes} />
+        </div>
+
+        <div className="chart" >
+          <h2>Magnetômetro</h2>
+          <Chart data={dataMagnetometer} axes={axes} />
+        </div>
+
+        <div className="chart" >
+          <h2>Barômetro</h2>
+          <p>Pressão atmosférica: {pressure * 100} Pa</p>
+          <Chart data={dataRelativeAltitude} axes={axes} />
+        </div>
+      </div>
+
+      <div className="map-container" style={{ height: "50vh", width: "100vw" }}>
+        {location ? (
+          <WrappedMap
+            lat={location.coords.latitude}
+            lng={location.coords.longitude}
+            googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=${process.env.REACT_APP_GOOGLE_KEY}`}
+            loadingElement={<div style={{ height: `100%` }} />}
+            containerElement={<div style={{ height: `100%` }} />}
+            mapElement={<div style={{ height: `100%` }} />}
+          />
+        ) : <h1>Waiting location...</h1>}
+      </div>
     </div>
   );
 }

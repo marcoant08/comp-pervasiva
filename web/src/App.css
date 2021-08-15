@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+.charts-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.chart {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  height: 200px;
+}
+
+.chart h2 {
+  margin: 10px 0;
+}
+
+.map-container {
+  height: 50vh;
+  position: absolute;
+  bottom: 0;
+  overflow: hidden;
+}
