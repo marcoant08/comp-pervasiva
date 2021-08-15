@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Chart } from 'react-charts'
 import './App.css';
+import Loader from './components/Loader';
 import WrappedMap from './Map';
 var mqtt = require('mqtt')
 var client;
@@ -94,28 +95,28 @@ function App() {
 
   return (
     <div className="App">
-      <h1 style={{ color: connected ? "#3CB371" : "#DC143C" }}>MQTT Dashboard: {!connected ? "des" : ""}conectado</h1>
+      <h1 style={{ color: connected ? "green" : "#DC143C" }}>MQTT Dashboard: {!connected ? "des" : ""}conectado</h1>
 
       <div className="charts-container">
         <div className="chart" >
           <h2>Giroscópio</h2>
-          <Chart data={dataGyroscope} axes={axes} />
+          <div style={{ width: 300, height: 200 }}><Chart data={dataGyroscope} axes={axes} /></div>
         </div>
 
         <div className="chart" >
           <h2>Acelerômetro</h2>
-          <Chart data={dataAccelerometer} axes={axes} />
+          <div style={{ width: 300, height: 200 }}><Chart data={dataAccelerometer} axes={axes} /></div>
         </div>
 
         <div className="chart" >
           <h2>Magnetômetro</h2>
-          <Chart data={dataMagnetometer} axes={axes} />
+          <div style={{ width: 300, height: 200 }}><Chart data={dataMagnetometer} axes={axes} /></div>
         </div>
 
         <div className="chart" >
           <h2>Barômetro</h2>
           <p>Pressão atmosférica: {pressure * 100} Pa</p>
-          <Chart data={dataRelativeAltitude} axes={axes} />
+          <div style={{ width: 300, height: 200 }}><Chart data={dataRelativeAltitude} axes={axes} /></div>
         </div>
       </div>
 
@@ -129,7 +130,12 @@ function App() {
             containerElement={<div style={{ height: `100%` }} />}
             mapElement={<div style={{ height: `100%` }} />}
           />
-        ) : <h1>Waiting location...</h1>}
+        ) : (
+          <>
+            <h1>Aguardando localização...</h1>
+            <br />
+            <Loader />
+          </>)}
       </div>
     </div>
   );

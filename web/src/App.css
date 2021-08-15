@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+body {
+  background: #add8e6;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -46,9 +50,14 @@
 
 .chart {
   display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 3px 3px #555;
   flex-direction: column;
-  width: 350px;
-  height: 200px;
+  width: 360px;
+  height: 270px;
 }
 
 .chart h2 {
