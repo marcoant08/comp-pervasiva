@@ -10,7 +10,6 @@ function App() {
   const [location, setLocation] = useState(null);
   const [connected, setConnected] = useState(false);
   const [pressure, setPressure] = useState(0);
-  const [step, setStep] = useState(0);
 
   const [dataGyroscope, setDataGyroscope] = useState([
     { label: "X", data: [[0, 0]] },
