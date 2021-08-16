@@ -5,7 +5,6 @@ import styles from "../assets/global/styles";
 
 const Barometro = ({ value, setValue }) => {
   const [subscription, setSubscription] = useState(null);
-  const [data, setData] = useState(null);
 
   const _subscribe = () => {
     setSubscription(

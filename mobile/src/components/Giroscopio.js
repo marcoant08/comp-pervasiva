@@ -14,7 +14,7 @@ const Giroscopio = ({ value, setValue }) => {
         setValue({
           x: gyroscopeData.x.toFixed(3),
           y: gyroscopeData.y.toFixed(3),
-          z: gyroscopeData.z.toFixed(3)
+          z: gyroscopeData.z.toFixed(3),
         });
       })
     );

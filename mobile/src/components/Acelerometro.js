@@ -14,7 +14,7 @@ const Acelerometro = ({ value, setValue }) => {
         setValue({
           x: accelerometerData.x.toFixed(3),
           y: accelerometerData.y.toFixed(3),
-          z: accelerometerData.z.toFixed(3)
+          z: accelerometerData.z.toFixed(3),
         });
       })
     );

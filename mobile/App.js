@@ -89,7 +89,7 @@ const App = () => {
       accelerometer,
       magnetometer,
       barometer,
-      location
+      location,
     });
   }, [gyroscope, accelerometer, magnetometer, barometer, location]);
 
