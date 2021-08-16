@@ -91,7 +91,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[0].data.filter((_, index) => index > 0),
+                  ...current[0].data.slice(1),
                   [
                     current[0].data[current[0].data.length - 1][0] + 1,
                     parsedData.gyroscope.x,
@@ -110,7 +110,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[1].data.filter((_, index) => index > 0),
+                  ...current[1].data.slice(1),
                   [
                     current[1].data[current[1].data.length - 1][0] + 1,
                     parsedData.gyroscope.y,
@@ -129,7 +129,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[2].data.filter((_, index) => index > 0),
+                  ...current[2].data.slice(1),
                   [
                     current[2].data[current[2].data.length - 1][0] + 1,
                     parsedData.gyroscope.z,
@@ -151,7 +151,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[0].data.filter((_, index) => index > 0),
+                  ...current[0].data.slice(1),
                   [
                     current[0].data[current[0].data.length - 1][0] + 1,
                     parsedData.accelerometer.x,
@@ -170,7 +170,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[1].data.filter((_, index) => index > 0),
+                  ...current[1].data.slice(1),
                   [
                     current[1].data[current[1].data.length - 1][0] + 1,
                     parsedData.accelerometer.y,
@@ -189,7 +189,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[2].data.filter((_, index) => index > 0),
+                  ...current[2].data.slice(1),
                   [
                     current[2].data[current[2].data.length - 1][0] + 1,
                     parsedData.accelerometer.z,
@@ -211,7 +211,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[0].data.filter((_, index) => index > 0),
+                  ...current[0].data.slice(1),
                   [
                     current[0].data[current[0].data.length - 1][0] + 1,
                     parsedData.magnetometer.x,
@@ -230,7 +230,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[1].data.filter((_, index) => index > 0),
+                  ...current[1].data.slice(1),
                   [
                     current[1].data[current[1].data.length - 1][0] + 1,
                     parsedData.magnetometer.y,
@@ -249,7 +249,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[2].data.filter((_, index) => index > 0),
+                  ...current[2].data.slice(1),
                   [
                     current[2].data[current[2].data.length - 1][0] + 1,
                     parsedData.magnetometer.z,
@@ -271,7 +271,7 @@ function App() {
                   ],
                 ]
               : [
-                  ...current[0].data.filter((_, index) => index > 0),
+                  ...current[0].data.slice(1),
                   [
                     current[0].data[current[0].data.length - 1][0] + 1,
                     parsedData.barometer.relativeAltitude,
